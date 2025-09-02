@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Guardião Mobile</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f0f4f8; }
+    .btn { background: #007BFF; color: white; border: none; padding: 15px 30px; margin: 10px; font-size: 18px; border-radius: 8px; cursor: pointer; }
+    .progress { width: 100%; background: #ddd; border-radius: 10px; margin: 20px auto; height: 30px; display: none; }
+    .progress-bar { height: 100%; width: 0%; background: #28a745; border-radius: 10px; text-align: center; color: white; }
+    #status { margin-top: 20px; font-size: 18px; }
+  </style>
+</head>
+<body>
+
+  <h1>🔒 Guardião Mobile</h1>
+  <p>Simulador de segurança para seu celular</p>
+  
+  <!-- Botão inicial -->
+  <button class="btn" onclick="iniciarEscaneamento()">Iniciar Verificação</button>
+
+  <!-- Barra de progresso -->
+  <div class="progress" id="progress">
+    <div class="progress-bar" id="progress-bar">0%</div>
+  </div>
+
+  <!-- Status -->
+  <p id="status"></p>
+
+  <!-- Mensagem final -->
+  <h2 id="final" style="display:none; color:green;">✅ Seu celular está seguro!</h2>
+
+  <!-- Botão ativar notificações -->
+  <button id="notifyBtn" class="btn" style="display:none;" onclick="ativarNotificacao()">Ativar Notificações</button>
+
+<script>
+  const frases = [
+    "Verificando memória do dispositivo...",
+    "Escaneando aplicativos instalados...",
+    "Checando conexões de rede...",
+    "Analisando arquivos temporários...",
+    "Finalizando análise de segurança..."
+  ];
+
+  function iniciarEscaneamento() {
+    document.getElementById("progress").style.display = "block";
+    let progress = 0;
+    let step = 0;
+    const interval = setInterval(() => {
+      if (progress < 100) {
+        progress += 20;
+        document.getElementById("progress-bar").style.width = progress + "%";
+        document.getElementById("progress-bar").innerText = progress + "%";
+        document.getElementById("status").innerText = frases[step] || "";
+        step++;
+      } else {
+        clearInterval(interval);
+        document.getElementById("status").style.display = "none";
+        document.getElementById("final").style.display = "block";
+        document.getElementById("notifyBtn").style.display = "inline-block";
+      }
+    }, 1500);
+  }
+
+  // Notificação push
+  function ativarNotificacao() {
+    if (Notification.permission === "granted") {
+      enviarNotificacao();
+    } else if (Notification.permission !== "denied") {
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          enviarNotificacao();
+        } else {
+          alert("Você precisa permitir notificações para ativar essa função.");
+        }
+      });
+    }
+  }
+
+  function enviarNotificacao() {
+    new Notification("Guardião Mobile", {
+      body: "✅ Seu celular está protegido!",
+      icon: "https://img.icons8.com/color/96/shield.png"
+    });
+  }
+</script>
+
+</body>
+</html>
